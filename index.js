@@ -108,7 +108,7 @@ app.post("/put-secret", async (req, res) => {
       if (req.body.score) data.score = req.body.score;
 
     const response = await axios.put(`https://secrets-api.appbrewery.com/secrets/${req.body.id}`,
-    data, 
+    data,
     {
       headers:
       
