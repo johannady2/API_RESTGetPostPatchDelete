@@ -12,7 +12,7 @@ const API_URL = "https://secrets-api.appbrewery.com";
 // https://secrets-api.appbrewery.com/
 
 //TODO 1: Add your own bearer token from the previous lesson.
-const yourBearerToken = "";
+const yourBearerToken = "c83b0276-4b6d-4b92-a3cb-9e22876b4d35";
 const config = {
   headers: { Authorization: `Bearer ${yourBearerToken}` },
 };
@@ -23,13 +23,41 @@ app.get("/", (req, res) => {
   res.render("index.ejs", { content: "Waiting for data..." });
 });
 
-app.post("/get-secret", async (req, res) => {
-  const searchId = req.body.id;
-  try {
-    const result = await axios.get(API_URL + "/secrets/" + searchId, config);
-    res.render("index.ejs", { content: JSON.stringify(result.data) });
-  } catch (error) {
-    res.render("index.ejs", { content: JSON.stringify(error.response.data) });
+app.post("/get-secret", async (req, res) =>
+{
+
+
+   try
+  {
+
+      const response = await axios.get(`https://secrets-api.appbrewery.com/secrets/${req.body.id}}`, {
+            headers: {
+                'Authorization': `Bearer ${yourBearerToken}`
+            }
+        })
+        .then(response => {
+
+          const result = response.data;
+            console.log(response.data);
+            res.render("index.ejs", { content: JSON.stringify(result)});
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+
+            res.render("index.ejs", { content: error});
+            
+        });
+      
+    
+
+      
+  }
+  catch(error)
+  {
+    console.error("Failed to make request:", error.message);
+    res.render("index.ejs", {
+      error: error.message,
+    });
   }
 });
 
