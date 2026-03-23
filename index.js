@@ -23,14 +23,9 @@ app.get("/", (req, res) => {
   res.render("index.ejs", { content: "Waiting for data..." });
 });
 
-app.post("/get-secret", async (req, res) =>
+const renderTheSecret = async (secretId,req,res)=>
 {
-
-
-   try
-  {
-
-      const response = await axios.get(`https://secrets-api.appbrewery.com/secrets/${req.body.id}}`, {
+  const response = await axios.get(`https://secrets-api.appbrewery.com/secrets/${secretId}}`, {
             headers: {
                 'Authorization': `Bearer ${yourBearerToken}`
             }
@@ -47,23 +42,59 @@ app.post("/get-secret", async (req, res) =>
             res.render("index.ejs", { content: error});
             
         });
-      
-    
+}
 
+app.post("/get-secret", async (req, res) =>
+{
+
+
+   try
+  {
+
+      renderTheSecret(req.body.id,req,res);
+    
       
   }
   catch(error)
   {
     console.error("Failed to make request:", error.message);
     res.render("index.ejs", {
-      error: error.message,
+      content: error.message,
     });
   }
 });
 
-app.post("/post-secret", async (req, res) => {
+app.post("/post-secret", async (req, res) =>
+{
   // TODO 2: Use axios to POST the data from req.body to the secrets api servers.
+  try
+  {
+    const response = await axios.post(`https://secrets-api.appbrewery.com/secrets`,
+    {
+      secret: req.body.secret,
+      score: req.body.score
+    }, 
+    {
+      headers:
+      
+      {
+        'Authorization': `Bearer ${yourBearerToken}`
+      }
+    });
+
+    //console.log(response.data.id);
+    renderTheSecret(response.data.id,req,res);
+    
+  }
+  catch(error)
+  {
+    console.error("Failed to make request:", error.message);
+    res.render("index.ejs", {
+      content: error.message,
+    });
+  }
 });
+
 
 app.post("/put-secret", async (req, res) => {
   const searchId = req.body.id;
