@@ -41,9 +41,9 @@ const renderTheSecret = async (secretId,req,res)=>
 
           let displayMessage = error.message;
           
-          //if (typeof secretId === "string") {
-          //  displayMessage = secretId;
-         // }
+          if (secretId.endsWith("has been deleted.")) {
+            displayMessage = secretId;
+         }
             console.log(`error from renderTheSecret function. ${displayMessage}`);
             res.render("index.ejs", { content: displayMessage});
             
