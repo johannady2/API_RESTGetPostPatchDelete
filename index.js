@@ -39,7 +39,13 @@ const renderTheSecret = async (secretId,req,res)=>
         .catch(error => {
             console.error('Error fetching data:', error);
 
-            res.render("index.ejs", { content: error});
+          let displayMessage = error.message;
+          
+          //if (typeof secretId === "string") {
+          //  displayMessage = secretId;
+         // }
+            console.log(`error from renderTheSecret function. ${displayMessage}`);
+            res.render("index.ejs", { content: displayMessage});
             
         });
 }
@@ -57,6 +63,7 @@ app.post("/get-secret", async (req, res) =>
   }
   catch(error)
   {
+    console.log('error from post /get-secret catch.');
     console.error("Failed to make request:", error.message);
     res.render("index.ejs", {
       content: error.message,
@@ -88,6 +95,7 @@ app.post("/post-secret", async (req, res) =>
   }
   catch(error)
   {
+    console.log('error from post /post-secret catch.');
     console.error("Failed to make request:", error.message);
     res.render("index.ejs", {
       content: error.message,
@@ -123,6 +131,7 @@ app.post("/put-secret", async (req, res) => {
   }
   catch(error)
   {
+    console.log('error from post /put-secret catch.');
     console.error("Failed to make request:", error.message);
     res.render("index.ejs", {
       content: error.message,
@@ -156,7 +165,7 @@ app.post("/patch-secret", async (req, res) => {
     
   }
   catch(error)
-  {
+  { console.log('error from post /patch-secret catch.');
     console.error("Failed to make request:", error.message);
     res.render("index.ejs", {
       content: error.message,
@@ -165,8 +174,32 @@ app.post("/patch-secret", async (req, res) => {
 });
 
 app.post("/delete-secret", async (req, res) => {
-  const searchId = req.body.id;
+  //const searchId = req.body.id;
   // TODO 5: Use axios to DELETE the item with searchId from the secrets api servers.
+  try
+  {
+
+    const response = await axios.delete(`https://secrets-api.appbrewery.com/secrets/${req.body.id}`,
+    {
+      headers:
+      
+      {
+        'Authorization': `Bearer ${yourBearerToken}`
+      }
+    });
+
+    //console.log(response.data.id);
+    renderTheSecret(`${req.body.id} has been deleted.`,req,res);
+    
+  }
+  catch(error)
+  {
+    console.log('error from post /delete-secret catch.');
+    console.error("Failed to make request:", error.message);
+    res.render("index.ejs", {
+      content: error.message,
+    });
+  }
 });
 
 app.listen(port, () => {
