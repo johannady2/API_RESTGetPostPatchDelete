@@ -97,8 +97,37 @@ app.post("/post-secret", async (req, res) =>
 
 
 app.post("/put-secret", async (req, res) => {
-  const searchId = req.body.id;
+  //const searchId = req.body.id;
   // TODO 3: Use axios to PUT the data from req.body to the secrets api servers.
+  try
+  {
+
+      const data = {};
+
+      if (req.body.secret) data.secret = req.body.secret;
+      if (req.body.score) data.score = req.body.score;
+
+    const response = await axios.put(`https://secrets-api.appbrewery.com/secrets/${req.body.id}`,
+    data, 
+    {
+      headers:
+      
+      {
+        'Authorization': `Bearer ${yourBearerToken}`
+      }
+    });
+
+    //console.log(response.data.id);
+    renderTheSecret(response.data.id,req,res);
+    
+  }
+  catch(error)
+  {
+    console.error("Failed to make request:", error.message);
+    res.render("index.ejs", {
+      content: error.message,
+    });
+  }
 });
 
 app.post("/patch-secret", async (req, res) => {
